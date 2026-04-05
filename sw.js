@@ -1,31 +1,30 @@
 // Service Worker for Satisfaction Meter (offline-first PWA)
-const CACHE_NAME = 'sat-meter-v1';
+const CACHE_NAME = 'sat-meter-v2';
 const urlsToCache = [
   './',
-  'index.html',
-  'dashboard.html',
-  'manifest.json',
-  'sw.js',
-  // icons (all provided icon files)
-  'icons/launchericon-72x72.png',
-  'icons/launchericon-96x96.png',
-  'icons/launchericon-144x144.png',
-  'icons/launchericon-192x192.png',
-  'icons/launchericon-512x512.png',
-  'icons/192.png'
+  './index.html',
+  './dashboard.html',
+  './manifest.json',
+  './sw.js'
 ];
 
-// Install event: cache essential files
+// Install event: cache essential files (only those that exist)
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
+      .then(async cache => {
         console.log('Opened cache', CACHE_NAME);
-        return cache.addAll(urlsToCache);
+        // Cache each file individually to avoid failing on missing files
+        for (const url of urlsToCache) {
+          try {
+            await cache.add(url);
+          } catch (err) {
+            console.warn(`Failed to cache ${url}:`, err);
+          }
+        }
       })
       .catch(err => console.error('Cache addAll failed', err))
   );
-  // Force waiting service worker to become active
   self.skipWaiting();
 });
 
@@ -46,35 +45,36 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch event: serve from cache, fallback to network (but app is offline-first)
+// Fetch event: serve from cache, fallback to network, but avoid chrome-extension schemes
 self.addEventListener('fetch', event => {
+  const requestUrl = event.request.url;
+  // Skip non-http/https requests (like chrome-extension://) to avoid errors
+  if (!requestUrl.startsWith('http')) {
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - return response
         if (response) {
           return response;
         }
-        // Clone request because it's a one-time use stream
         const fetchRequest = event.request.clone();
         return fetch(fetchRequest).then(
           networkResponse => {
-            // Check if valid response
             if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
               return networkResponse;
             }
-            // Clone response for caching
             const responseToCache = networkResponse.clone();
             caches.open(CACHE_NAME)
               .then(cache => {
                 cache.put(event.request, responseToCache);
-              });
+              })
+              .catch(err => console.warn('Cache put failed:', err));
             return networkResponse;
           }
         ).catch(() => {
-          // Optional: fallback offline page (not required, but we can return a generic response)
-          // Since all critical assets are cached, this error should rarely happen.
-          console.warn('Fetch failed for:', event.request.url);
+          console.warn('Fetch failed for:', requestUrl);
         });
       })
   );

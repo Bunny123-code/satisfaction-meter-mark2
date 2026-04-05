@@ -6,134 +6,164 @@
   <meta name="theme-color" content="#4f46e5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="./icons/launchericon-192x192.png">
-  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="https://bunny123-code.github.io/satisfaction-meter-mark2/icons/launchericon-192x192.png">
+  <link rel="manifest" href="https://bunny123-code.github.io/satisfaction-meter-mark2/manifest.json">
   <title>Satisfaction Meter · Dashboard</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
-      background: #f1f5f9;
-      padding: 1rem;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      padding: 1.5rem;
       min-height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 70% 20%, rgba(79,70,229,0.1), transparent 70%);
+      pointer-events: none;
     }
 
-    /* navigation bar */
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      animation: fadeSlide 0.4s ease;
+    }
+
+    /* glass navigation */
     .nav-bar {
-      background: white;
-      border-radius: 40px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border-radius: 80px;
       display: inline-flex;
-      gap: 0.25rem;
-      padding: 0.4rem 0.8rem;
-      margin-bottom: 1.5rem;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
     .nav-bar a {
       text-decoration: none;
-      padding: 0.5rem 1.2rem;
-      border-radius: 32px;
+      padding: 0.6rem 1.5rem;
+      border-radius: 60px;
       font-weight: 600;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-      color: #1e293b;
-      background: #f1f5f9;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      color: #f1f5f9;
+      background: rgba(255,255,255,0.05);
     }
     .nav-bar a.active, .nav-bar a:hover {
       background: #4f46e5;
       color: white;
-      box-shadow: 0 2px 6px rgba(79,70,229,0.3);
-    }
-
-    .dashboard-container {
-      max-width: 1200px;
-      margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(79,70,229,0.5);
     }
 
     /* stats cards */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
     }
     .stat-card {
-      background: white;
-      border-radius: 1.5rem;
-      padding: 1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border-radius: 2rem;
+      padding: 1.3rem;
+      box-shadow: 0 12px 28px -10px rgba(0,0,0,0.1);
       text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.25s;
+      border: 1px solid rgba(255,255,255,0.6);
     }
     .stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transform: translateY(-5px);
+      background: white;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
     }
     .stat-number {
-      font-size: 2rem;
+      font-size: 2.4rem;
       font-weight: 800;
-      margin: 0.3rem 0;
+      margin: 0.5rem 0;
     }
     .stat-label {
-      font-size: 0.8rem;
-      color: #475569;
-      font-weight: 500;
+      font-size: 0.85rem;
+      color: #334155;
+      font-weight: 600;
+      letter-spacing: 0.3px;
     }
-    .happy-bg { color: #22c55e; }
-    .neutral-bg { color: #eab308; }
-    .unhappy-bg { color: #ef4444; }
+    .happy-bg { color: #16a34a; }
+    .neutral-bg { color: #ca8a04; }
+    .unhappy-bg { color: #dc2626; }
 
     /* chart card */
     .chart-card {
       background: white;
-      border-radius: 1.5rem;
-      padding: 1.2rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border-radius: 2rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 12px 30px -12px rgba(0,0,0,0.12);
+      transition: transform 0.2s;
     }
     .chart-card h2 {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      margin-bottom: 1.2rem;
       color: #0f172a;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
     canvas {
       max-width: 100%;
       height: auto;
       background: #fefefe;
-      border-radius: 0.8rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     /* action buttons */
     .action-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.8rem;
-      margin-bottom: 1.5rem;
+      gap: 1rem;
+      margin-bottom: 2rem;
       justify-content: center;
     }
     .btn {
       background: white;
       border: 1px solid #e2e8f0;
-      padding: 0.6rem 1.2rem;
-      border-radius: 2rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 3rem;
       font-weight: 600;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
     .btn-primary {
-      background: #4f46e5;
+      background: linear-gradient(105deg, #4f46e5, #6366f1);
       color: white;
       border: none;
     }
     .btn-primary:hover {
-      background: #4338ca;
-      transform: translateY(-1px);
+      background: linear-gradient(105deg, #4338ca, #4f46e5);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -6px #4f46e5b3;
     }
     .btn-danger {
       background: #fee2e2;
@@ -142,94 +172,111 @@
     }
     .btn-danger:hover {
       background: #fecaca;
+      transform: translateY(-2px);
+    }
+    .btn:hover:not(.btn-primary) {
+      transform: translateY(-2px);
+      background: #f8fafc;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
     }
 
-    /* recent feedback section */
+    /* recent feedback */
     .recent-section {
       background: white;
-      border-radius: 1.5rem;
-      padding: 1.2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border-radius: 2rem;
+      padding: 1.5rem;
+      box-shadow: 0 12px 28px -10px rgba(0,0,0,0.08);
     }
     .recent-section h2 {
-      font-size: 1.2rem;
-      margin-bottom: 0.8rem;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
       color: #0f172a;
     }
     .feedback-list {
-      max-height: 450px;
+      max-height: 480px;
       overflow-y: auto;
+      padding-right: 0.3rem;
     }
     .feedback-item {
-      border-bottom: 1px solid #e2e8f0;
-      padding: 0.8rem;
+      border-bottom: 1px solid #eef2ff;
+      padding: 1rem;
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      gap: 1rem;
       flex-wrap: wrap;
+      transition: background 0.15s;
+      border-radius: 1rem;
+    }
+    .feedback-item:hover {
+      background: #f8fafc;
     }
     .feedback-mood {
-      font-size: 1.8rem;
-      min-width: 50px;
+      font-size: 2rem;
+      min-width: 55px;
+      text-align: center;
     }
     .feedback-comment {
       flex: 2;
       font-size: 0.85rem;
       color: #1e293b;
       word-break: break-word;
+      background: #f1f5f9;
+      padding: 0.4rem 0.9rem;
+      border-radius: 1rem;
     }
     .feedback-date {
       font-size: 0.7rem;
       color: #64748b;
-      min-width: 130px;
+      min-width: 150px;
+      font-family: monospace;
     }
     .empty-msg {
       text-align: center;
       color: #94a3b8;
       padding: 2rem;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
-    @media (max-width: 680px) {
-      body { padding: 0.8rem; }
-      .stat-number { font-size: 1.6rem; }
+    @media (max-width: 700px) {
+      body { padding: 1rem; }
+      .stat-number { font-size: 1.8rem; }
       .feedback-item { flex-direction: column; align-items: flex-start; }
       .feedback-date { align-self: flex-start; }
-      .btn { padding: 0.5rem 1rem; font-size: 0.75rem; }
+      .btn { padding: 0.5rem 1.1rem; font-size: 0.75rem; }
     }
   </style>
 </head>
 <body>
 <div class="dashboard-container">
   <div class="nav-bar">
-    <a href="./index.html">📝 Customer Form</a>
-    <a href="./dashboard.html" class="active">📊 Dashboard</a>
+    <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/index.html">📝 Customer Form</a>
+    <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/dashboard.html" class="active">📊 Dashboard</a>
   </div>
 
   <div class="stats-grid" id="statsGrid">
-    <div class="stat-card"><div class="stat-label">Total Responses</div><div class="stat-number" id="totalCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">📊 Total Responses</div><div class="stat-number" id="totalCount">0</div></div>
     <div class="stat-card"><div class="stat-label">😊 Happy</div><div class="stat-number happy-bg" id="happyCount">0</div><div id="happyPercent" class="stat-label">0%</div></div>
     <div class="stat-card"><div class="stat-label">😐 Neutral</div><div class="stat-number neutral-bg" id="neutralCount">0</div><div id="neutralPercent" class="stat-label">0%</div></div>
     <div class="stat-card"><div class="stat-label">😠 Unhappy</div><div class="stat-number unhappy-bg" id="unhappyCount">0</div><div id="unhappyPercent" class="stat-label">0%</div></div>
   </div>
 
   <div class="chart-card">
-    <h2>📊 Satisfaction Bar Chart</h2>
+    <h2>📈 Satisfaction Bar Chart</h2>
     <canvas id="moodChart" width="600" height="280" style="width:100%; max-width:700px; height:auto;"></canvas>
   </div>
 
   <div class="action-buttons">
     <button class="btn" id="refreshBtn">🔄 Refresh</button>
-    <button class="btn btn-primary" id="exportBtn">📥 Export Data (JSON)</button>
+    <button class="btn btn-primary" id="exportBtn">📥 Export JSON</button>
     <button class="btn btn-primary" id="importBtn">📂 Import Data</button>
     <input type="file" id="importFileInput" accept=".json" style="display:none" />
-    <button class="btn btn-danger" id="resetBtn">⚠️ Reset All Data</button>
+    <button class="btn btn-danger" id="resetBtn">⚠️ Reset All</button>
   </div>
 
   <div class="recent-section">
     <h2>📋 Recent 20 feedback entries</h2>
     <div id="feedbackListContainer" class="feedback-list">
-      <div class="empty-msg">Loading feedback...</div>
+      <div class="empty-msg">✨ Loading feedback...</div>
     </div>
   </div>
 </div>
@@ -335,7 +382,6 @@
       ctx.font = 'bold 14px system-ui';
       ctx.fillText(bar.value, x + (barWidth - 10)/2, y - 5);
     });
-    // axes
     ctx.beginPath();
     ctx.moveTo(40, bottomY);
     ctx.lineTo(width-20, bottomY);
@@ -462,9 +508,8 @@
 
   refreshDashboard();
 
-  // Register service worker (relative path)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
+    navigator.serviceWorker.register('https://bunny123-code.github.io/satisfaction-meter-mark2/sw.js').then(reg => {
       console.log('Dashboard: SW registered', reg);
     }).catch(err => console.log('SW error', err));
   }

@@ -4,10 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#4f46e5">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="https://bunny123-code.github.io/satisfaction-meter-mark2/icons/launchericon-192x192.png">
-  <link rel="manifest" href="https://bunny123-code.github.io/satisfaction-meter-mark2/manifest.json">
+  <!-- Removed manifest link to avoid 404 errors (icons missing). Add back if you fix the icon paths in manifest.json -->
   <title>Satisfaction Meter · Dashboard</title>
   <style>
     * {
@@ -370,7 +369,7 @@
     ctx.closePath();
     ctx.fillStyle = fillStyle;
     ctx.fill();
-    ctx.shadowColor = 'transparent'; // reset for other drawings
+    ctx.shadowColor = 'transparent';
     ctx.restore();
   }
 
@@ -475,10 +474,9 @@
     ctx.lineWidth = 1.5;
     ctx.stroke();
     
-    // add tiny icons or extra flair: subtle inner glow on bars (optional)
     ctx.restore();
     
-    // draw title inside canvas (optional)
+    // title inside canvas (optional)
     ctx.font = 'italic 11px "Inter"';
     ctx.fillStyle = '#6c757d';
     ctx.textAlign = 'right';
@@ -622,10 +620,12 @@
     }, 150);
   });
 
+  // Register service worker only if it exists (to avoid errors if sw.js is missing/broken)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('https://bunny123-code.github.io/satisfaction-meter-mark2/sw.js').then(reg => {
-      console.log('Dashboard: SW registered', reg);
-    }).catch(err => console.log('SW error', err));
+    const swUrl = 'https://bunny123-code.github.io/satisfaction-meter-mark2/sw.js';
+    navigator.serviceWorker.register(swUrl, { scope: '/satisfaction-meter-mark2/' })
+      .then(reg => console.log('Dashboard: SW registered', reg))
+      .catch(err => console.warn('SW registration skipped (expected if sw.js missing):', err));
   }
 </script>
 </body>

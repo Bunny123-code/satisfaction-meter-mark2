@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#4f46e5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/icons/launchericon-192x192.png">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="icons/launchericon-192x192.png">
+  <link rel="manifest" href="manifest.json">
   <title>Satisfaction Meter · Customer</title>
   <style>
     * {
@@ -181,8 +181,8 @@
 </head>
 <body>
 <div class="nav-bar">
-  <a href="/index.html" class="active">📝 Customer Form</a>
-  <a href="/dashboard.html">📊 Dashboard</a>
+  <a href="index.html" class="active">📝 Customer Form</a>
+  <a href="dashboard.html">📊 Dashboard</a>
 </div>
 <div class="container">
   <h1>😊 Satisfaction Meter</h1>
@@ -319,9 +319,9 @@
     }
   });
 
-  // Register service worker for offline PWA
+  // Register service worker for offline PWA (relative path)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').then(reg => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
       console.log('Service Worker registered', reg);
     }).catch(err => console.log('SW registration failed', err));
   }

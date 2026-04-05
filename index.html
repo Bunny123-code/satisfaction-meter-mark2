@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#4f46e5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="./icons/launchericon-192x192.png">
-  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="https://bunny123-code.github.io/satisfaction-meter-mark2/icons/launchericon-192x192.png">
+  <link rel="manifest" href="https://bunny123-code.github.io/satisfaction-meter-mark2/manifest.json">
   <title>Satisfaction Meter · Customer</title>
   <style>
     * {
@@ -18,121 +18,133 @@
     }
 
     body {
-      background: linear-gradient(145deg, #f8fafc 0%, #eef2f6 100%);
+      background: radial-gradient(circle at 10% 30%, #f0f4fe, #e6eefa);
       min-height: 100vh;
       padding: 1rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .nav-bar {
-      background: white;
-      border-radius: 40px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05), 0 1px 1px rgba(255,255,255,0.6) inset;
       display: inline-flex;
-      gap: 0.25rem;
+      gap: 0.4rem;
       padding: 0.4rem 0.8rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.5);
     }
     .nav-bar a {
       text-decoration: none;
-      padding: 0.5rem 1.2rem;
-      border-radius: 32px;
+      padding: 0.55rem 1.4rem;
+      border-radius: 40px;
       font-weight: 600;
       font-size: 0.85rem;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       color: #1e293b;
-      background: #f1f5f9;
+      background: rgba(241,245,249,0.7);
+      backdrop-filter: blur(4px);
     }
     .nav-bar a.active, .nav-bar a:hover {
       background: #4f46e5;
       color: white;
-      box-shadow: 0 2px 6px rgba(79,70,229,0.3);
+      box-shadow: 0 6px 14px rgba(79,70,229,0.35);
+      transform: translateY(-1px);
     }
 
     .container {
-      max-width: 550px;
+      max-width: 580px;
       width: 100%;
-      background: white;
-      border-radius: 2rem;
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
-      padding: 1.8rem 1.5rem 2rem;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(2px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.02);
+      padding: 2rem 1.8rem;
+      transition: transform 0.2s;
+    }
+    .container:hover {
+      transform: scale(1.01);
     }
 
     h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #1e293b, #4f46e5);
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #0f172a, #4f46e5);
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
-      margin-bottom: 0.2rem;
-      letter-spacing: -0.3px;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.5px;
     }
 
     .store-name {
-      font-size: 0.9rem;
-      color: #475569;
-      border-left: 3px solid #4f46e5;
-      padding-left: 0.8rem;
-      margin: 0.5rem 0 1.5rem 0;
+      font-size: 0.95rem;
+      color: #334155;
+      border-left: 4px solid #4f46e5;
+      padding-left: 1rem;
+      margin: 0.75rem 0 1.8rem 0;
       font-weight: 500;
+      background: linear-gradient(90deg, #f8fafc, transparent);
+      border-radius: 0 12px 12px 0;
     }
 
     .emoji-panel {
       display: flex;
       justify-content: space-between;
-      gap: 0.8rem;
-      margin-bottom: 1.5rem;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
-
     .mood-btn {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      font-size: 2.2rem;
-      padding: 0.8rem 0;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      font-size: 2rem;
+      padding: 0.9rem 0;
       width: 100%;
-      border-radius: 1.2rem;
+      border-radius: 1.8rem;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      font-weight: 600;
+      color: #1e293b;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
     }
-
     .mood-btn:hover {
-      transform: translateY(-2px);
-      background: #f1f5f9;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      transform: translateY(-4px);
+      background: #fefefe;
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 22px -10px rgba(0,0,0,0.1);
     }
-
     .mood-btn.selected {
-      background: #eef2ff;
-      transform: scale(1.01);
-      border-color: #4f46e5;
-      box-shadow: 0 8px 20px -5px rgba(79,70,229,0.3);
+      transform: scale(1.02) translateY(-2px);
+      box-shadow: 0 12px 20px -8px rgba(79,70,229,0.4);
     }
-
-    .mood-btn.happy.selected { background: #dcfce7; border-color: #22c55e; }
-    .mood-btn.neutral.selected { background: #fef9c3; border-color: #eab308; }
-    .mood-btn.unhappy.selected { background: #ffe4e2; border-color: #ef4444; }
+    .mood-btn.happy.selected { background: #dcfce7; border-color: #22c55e; box-shadow: 0 6px 14px #22c55e30; }
+    .mood-btn.neutral.selected { background: #fef9c3; border-color: #eab308; box-shadow: 0 6px 14px #eab30830; }
+    .mood-btn.unhappy.selected { background: #ffe4e2; border-color: #ef4444; box-shadow: 0 6px 14px #ef444430; }
 
     .comment-area {
-      margin: 1.2rem 0;
+      margin: 1.5rem 0;
     }
-
     label {
       font-weight: 600;
       font-size: 0.85rem;
       color: #0f172a;
       display: block;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.5rem;
     }
-
     textarea {
       width: 100%;
-      padding: 0.8rem;
-      border-radius: 1rem;
+      padding: 0.9rem;
+      border-radius: 1.2rem;
       border: 1.5px solid #e2e8f0;
       font-size: 0.9rem;
       resize: vertical;
@@ -140,76 +152,73 @@
       font-family: inherit;
       background: #fefefe;
     }
-
     textarea:focus {
       outline: none;
       border-color: #4f46e5;
-      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+      box-shadow: 0 0 0 4px rgba(79,70,229,0.15);
     }
-
     .char-counter {
       text-align: right;
       font-size: 0.7rem;
       color: #64748b;
-      margin-top: 0.2rem;
+      margin-top: 0.3rem;
     }
-
     button.submit {
-      background: #4f46e5;
+      background: linear-gradient(105deg, #4f46e5, #6366f1);
       border: none;
       width: 100%;
-      padding: 0.85rem;
+      padding: 0.9rem;
       font-size: 1rem;
       font-weight: 600;
       color: white;
-      border-radius: 1.5rem;
+      border-radius: 2rem;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 0.5rem;
-      box-shadow: 0 4px 12px rgba(79,70,229,0.25);
+      transition: all 0.25s;
+      margin-top: 0.75rem;
+      box-shadow: 0 6px 14px rgba(79,70,229,0.35);
     }
-
     button.submit:hover {
-      background: #4338ca;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(79,70,229,0.35);
+      background: linear-gradient(105deg, #4338ca, #4f46e5);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px -8px rgba(79,70,229,0.5);
     }
-
     .message {
       margin-top: 1rem;
       text-align: center;
       font-weight: 500;
       font-size: 0.85rem;
-      padding: 0.6rem;
+      padding: 0.7rem;
       border-radius: 1.5rem;
       background: #e6f7e6;
       color: #166534;
+      animation: slideUp 0.2s ease;
     }
-
     .error-msg {
       background: #fee2e2;
       color: #b91c1c;
     }
-
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     footer {
-      margin-top: 1.2rem;
+      margin-top: 1.5rem;
       text-align: center;
       font-size: 0.7rem;
       color: #94a3b8;
     }
-
     @media (max-width: 500px) {
       body { padding: 0.8rem; }
-      .container { padding: 1.2rem; }
-      .mood-btn { font-size: 1.8rem; padding: 0.6rem 0; }
-      h1 { font-size: 1.3rem; }
+      .container { padding: 1.4rem; }
+      .mood-btn { font-size: 1.5rem; padding: 0.7rem 0; }
+      h1 { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body>
 <div class="nav-bar">
-  <a href="./index.html" class="active">📝 Customer Form</a>
-  <a href="./dashboard.html">📊 Dashboard</a>
+  <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/index.html" class="active">📝 Customer Form</a>
+  <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/dashboard.html">📊 Dashboard</a>
 </div>
 <div class="container">
   <h1>😊 Satisfaction Meter</h1>
@@ -341,9 +350,9 @@
     }
   });
 
-  // Register service worker (relative path with ./)
+  // Register service worker (absolute path)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
+    navigator.serviceWorker.register('https://bunny123-code.github.io/satisfaction-meter-mark2/sw.js').then(reg => {
       console.log('Service Worker registered', reg);
     }).catch(err => console.log('SW registration failed', err));
   }

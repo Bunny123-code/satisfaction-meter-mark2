@@ -14,149 +14,136 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
     }
 
     body {
-      background: linear-gradient(125deg, #f9f3e6 0%, #e6e9f0 100%);
+      background: radial-gradient(circle at 10% 30%, #f0f4fe, #e6eefa);
       min-height: 100vh;
-      padding: 1.5rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: relative;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 20% 40%, rgba(79,70,229,0.08), transparent 70%);
-      pointer-events: none;
+      animation: fadeIn 0.4s ease-out;
     }
 
-    @keyframes floatIn {
-      0% { opacity: 0; transform: scale(0.96) translateY(20px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* modern navigation */
+    /* Modern navigation bar - absolute URLs */
     .nav-bar {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(16px);
-      border-radius: 80px;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05), 0 1px 1px rgba(255,255,255,0.6) inset;
       display: inline-flex;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      gap: 0.4rem;
+      padding: 0.4rem 0.8rem;
       margin-bottom: 2rem;
-      border: 1px solid rgba(255,255,255,0.2);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.5);
     }
     .nav-bar a {
       text-decoration: none;
-      padding: 0.6rem 1.5rem;
-      border-radius: 60px;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
       font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-      color: #f1f5f9;
-      background: rgba(255,255,255,0.05);
+      font-size: 0.8rem;  /* smaller nav text */
+      transition: all 0.25s ease;
+      color: #1e293b;
+      background: rgba(241,245,249,0.7);
     }
     .nav-bar a.active, .nav-bar a:hover {
       background: #4f46e5;
       color: white;
-      box-shadow: 0 4px 12px rgba(79,70,229,0.5);
+      box-shadow: 0 6px 14px rgba(79,70,229,0.35);
+      transform: translateY(-1px);
     }
 
-    /* main card - premium feel */
+    /* Main card */
     .container {
-      max-width: 600px;
+      max-width: 550px;
       width: 100%;
-      background: rgba(255,255,255,0.97);
-      border-radius: 3rem;
-      box-shadow: 0 30px 50px -20px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.5);
-      padding: 2rem 2rem 2.2rem;
-      animation: floatIn 0.5s ease-out;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+      padding: 1.5rem 1.5rem 1.8rem;
       transition: transform 0.2s;
     }
 
     h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      background: linear-gradient(115deg, #1e1b4b, #4f46e5, #7c3aed);
+      font-size: 1.4rem;  /* smaller heading */
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e293b, #4f46e5);
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
-      margin-bottom: 0.3rem;
-      letter-spacing: -0.02em;
+      margin-bottom: 0.2rem;
+      letter-spacing: -0.3px;
     }
 
     .store-name {
-      font-size: 1rem;
-      color: #2d3a5e;
-      border-left: 4px solid #4f46e5;
-      padding-left: 1rem;
-      margin: 0.8rem 0 2rem 0;
+      font-size: 0.8rem;  /* smaller store text */
+      color: #475569;
+      border-left: 3px solid #4f46e5;
+      padding-left: 0.8rem;
+      margin: 0.5rem 0 1.2rem 0;
       font-weight: 500;
-      background: linear-gradient(90deg, #eef2ff, transparent);
-      border-radius: 0 20px 20px 0;
-      line-height: 1.3;
     }
 
-    /* mood panel - big playful buttons */
+    /* Emoji panel - attractive emojis with slight shadow and larger size */
     .emoji-panel {
       display: flex;
       justify-content: space-between;
-      gap: 1.2rem;
-      margin-bottom: 2rem;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
     }
     .mood-btn {
       background: #ffffff;
-      border: none;
-      font-size: 2.2rem;
-      padding: 1rem 0;
+      border: 1px solid #e2e8f0;
+      font-size: 2rem;   /* slightly larger emoji */
+      padding: 0.7rem 0;
       width: 100%;
-      border-radius: 2rem;
+      border-radius: 1.2rem;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.2, 1.2, 0.4, 1);
-      font-weight: 600;
-      color: #1e293b;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
-      border: 1px solid #eef2ff;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     .mood-btn:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 20px 28px -12px rgba(0,0,0,0.2);
-      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      background: #f1f5f9;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
     .mood-btn.selected {
-      transform: scale(1.03) translateY(-3px);
-      box-shadow: 0 18px 28px -10px rgba(0,0,0,0.2);
+      transform: scale(1.01);
+      box-shadow: 0 8px 20px -5px rgba(79,70,229,0.3);
     }
-    .mood-btn.happy.selected { background: #dcfce7; border-color: #22c55e; box-shadow: 0 12px 20px -8px #22c55e60; }
-    .mood-btn.neutral.selected { background: #fef9c3; border-color: #eab308; box-shadow: 0 12px 20px -8px #eab30860; }
-    .mood-btn.unhappy.selected { background: #ffe4e2; border-color: #ef4444; box-shadow: 0 12px 20px -8px #ef444460; }
+    .mood-btn.happy.selected { background: #dcfce7; border-color: #22c55e; }
+    .mood-btn.neutral.selected { background: #fef9c3; border-color: #eab308; }
+    .mood-btn.unhappy.selected { background: #ffe4e2; border-color: #ef4444; }
 
-    /* comment area */
+    /* Comment area */
     .comment-area {
-      margin: 1.8rem 0;
+      margin: 1rem 0;
     }
     label {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.75rem;  /* smaller label */
       color: #0f172a;
       display: block;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.3rem;
     }
     textarea {
       width: 100%;
-      padding: 1rem;
-      border-radius: 1.5rem;
+      padding: 0.7rem;
+      border-radius: 1rem;
       border: 1.5px solid #e2e8f0;
-      font-size: 0.9rem;
+      font-size: 0.8rem;   /* smaller text inside */
       resize: vertical;
       transition: 0.2s;
       font-family: inherit;
@@ -165,73 +152,58 @@
     textarea:focus {
       outline: none;
       border-color: #4f46e5;
-      box-shadow: 0 0 0 4px rgba(79,70,229,0.2);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
     }
     .char-counter {
       text-align: right;
-      font-size: 0.7rem;
+      font-size: 0.65rem;  /* smaller counter */
       color: #64748b;
-      margin-top: 0.3rem;
+      margin-top: 0.2rem;
     }
-
-    /* submit button - glowing effect */
     button.submit {
-      background: linear-gradient(100deg, #4f46e5, #8b5cf6);
+      background: #4f46e5;
       border: none;
       width: 100%;
-      padding: 1rem;
-      font-size: 1.05rem;
-      font-weight: 700;
+      padding: 0.7rem;
+      font-size: 0.9rem;   /* smaller button text */
+      font-weight: 600;
       color: white;
-      border-radius: 2rem;
+      border-radius: 1.5rem;
       cursor: pointer;
-      transition: all 0.25s;
+      transition: all 0.2s;
       margin-top: 0.5rem;
-      box-shadow: 0 10px 20px -5px rgba(79,70,229,0.5);
-      letter-spacing: 0.3px;
+      box-shadow: 0 4px 12px rgba(79,70,229,0.25);
     }
     button.submit:hover {
-      background: linear-gradient(100deg, #4338ca, #7c3aed);
-      transform: translateY(-2px);
-      box-shadow: 0 18px 28px -8px rgba(79,70,229,0.7);
+      background: #4338ca;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(79,70,229,0.35);
     }
-    button.submit:active {
-      transform: translateY(1px);
-    }
-
-    /* message styling */
     .message {
       margin-top: 1rem;
       text-align: center;
       font-weight: 500;
-      font-size: 0.9rem;
-      padding: 0.8rem;
-      border-radius: 2rem;
+      font-size: 0.75rem;  /* smaller message */
+      padding: 0.5rem;
+      border-radius: 1.5rem;
       background: #e6f7e6;
       color: #166534;
-      animation: slideUp 0.2s ease;
     }
     .error-msg {
       background: #fee2e2;
       color: #b91c1c;
     }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     footer {
-      margin-top: 1.8rem;
+      margin-top: 1rem;
       text-align: center;
-      font-size: 0.7rem;
+      font-size: 0.65rem;  /* smaller footer */
       color: #94a3b8;
     }
-
-    @media (max-width: 550px) {
-      body { padding: 1rem; }
-      .container { padding: 1.5rem; }
-      .mood-btn { font-size: 1.6rem; padding: 0.7rem 0; }
-      h1 { font-size: 1.5rem; }
+    @media (max-width: 500px) {
+      body { padding: 0.8rem; }
+      .container { padding: 1.2rem; }
+      .mood-btn { font-size: 1.8rem; padding: 0.6rem 0; }
+      h1 { font-size: 1.2rem; }
     }
   </style>
 </head>

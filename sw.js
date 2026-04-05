@@ -1,18 +1,18 @@
 // Service Worker for Satisfaction Meter (offline-first PWA)
 const CACHE_NAME = 'sat-meter-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/dashboard.html',
-  '/manifest.json',
-  '/sw.js',
+  './',
+  'index.html',
+  'dashboard.html',
+  'manifest.json',
+  'sw.js',
   // icons (all provided icon files)
-  '/icons/launchericon-72x72.png',
-  '/icons/launchericon-96x96.png',
-  '/icons/launchericon-144x144.png',
-  '/icons/launchericon-192x192.png',
-  '/icons/launchericon-512x512.png',
-  '/icons/192.png'
+  'icons/launchericon-72x72.png',
+  'icons/launchericon-96x96.png',
+  'icons/launchericon-144x144.png',
+  'icons/launchericon-192x192.png',
+  'icons/launchericon-512x512.png',
+  'icons/192.png'
 ];
 
 // Install event: cache essential files
@@ -73,7 +73,6 @@ self.addEventListener('fetch', event => {
           }
         ).catch(() => {
           // Optional: fallback offline page (not required, but we can return a generic response)
-          // For HTML requests, could return offline.html; but we assume everything needed is cached.
           // Since all critical assets are cached, this error should rarely happen.
           console.warn('Fetch failed for:', event.request.url);
         });

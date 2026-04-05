@@ -132,8 +132,10 @@
       max-width: 100%;
       height: auto;
       background: #fefefe;
-      border-radius: 1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-radius: 1.2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      display: block;
+      margin: 0 auto;
     }
 
     /* action buttons */
@@ -261,8 +263,8 @@
   </div>
 
   <div class="chart-card">
-    <h2>📈 Satisfaction Bar Chart</h2>
-    <canvas id="moodChart" width="600" height="280" style="width:100%; max-width:700px; height:auto;"></canvas>
+    <h2>📈 Satisfaction Bar Chart — <span style="font-size:0.8rem;">beautiful & smooth</span></h2>
+    <canvas id="moodChart" width="700" height="320" style="width:100%; max-width:750px; height:auto;"></canvas>
   </div>
 
   <div class="action-buttons">
@@ -346,46 +348,141 @@
     });
   }
 
-  function drawBarChart(happy, neutral, unhappy) {
+  // ========== ATTRACTIVE BAR CHART WITH ROUNDED BARS & GRADIENTS ==========
+  function drawRoundedRect(ctx, x, y, width, height, radius, fillStyle, shadow = true) {
+    ctx.save();
+    if (shadow) {
+      ctx.shadowColor = 'rgba(0,0,0,0.2)';
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
+    }
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+    ctx.shadowColor = 'transparent'; // reset for other drawings
+    ctx.restore();
+  }
+
+  function drawAttractiveBarChart(happy, neutral, unhappy) {
     const canvas = document.getElementById('moodChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const maxVal = Math.max(happy, neutral, unhappy, 1);
-    const width = canvas.clientWidth;
-    const height = 280;
-    canvas.width = width;
-    canvas.height = height;
+    const containerWidth = canvas.clientWidth;
+    const fixedHeight = 320;
+    canvas.width = containerWidth;
+    canvas.height = fixedHeight;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    if (width === 0) return;
 
     ctx.clearRect(0, 0, width, height);
-    const barWidth = (width - 100) / 3;
-    const startX = 50;
-    const bottomY = height - 40;
-    const maxBarHeight = height - 80;
-
+    
+    // background subtle gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+    bgGrad.addColorStop(0, '#fef9f0');
+    bgGrad.addColorStop(1, '#ffffff');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, width, height);
+    
+    // draw light grid lines (horizontal)
+    const maxVal = Math.max(happy, neutral, unhappy, 1);
+    const topMargin = 45;
+    const bottomMargin = 55;
+    const chartHeight = height - topMargin - bottomMargin;
+    const steps = 4;
+    ctx.save();
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 0.8;
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px "Inter", system-ui';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= steps; i++) {
+      const yVal = topMargin + (chartHeight / steps) * i;
+      ctx.beginPath();
+      ctx.moveTo(55, yVal);
+      ctx.lineTo(width - 25, yVal);
+      ctx.stroke();
+      const labelVal = Math.round(maxVal - (maxVal / steps) * i);
+      ctx.fillStyle = '#475569';
+      ctx.fillText(labelVal, 45, yVal + 3);
+    }
+    
+    // bar dimensions
+    const barWidthRaw = (width - 110) / 3;
+    const barWidth = Math.min(barWidthRaw, 130);
+    const startX = (width - (barWidth * 3 + 40)) / 2;
+    const bottomY = height - bottomMargin + 8;
+    const maxBarHeight = chartHeight - 10;
+    
     const bars = [
-      { label: '😊 Happy', value: happy, color: '#22c55e' },
-      { label: '😐 Neutral', value: neutral, color: '#eab308' },
-      { label: '😠 Unhappy', value: unhappy, color: '#ef4444' }
+      { label: '😊 Happy', value: happy, color1: '#4ade80', color2: '#22c55e', baseColor: '#16a34a' },
+      { label: '😐 Neutral', value: neutral, color1: '#facc15', color2: '#eab308', baseColor: '#ca8a04' },
+      { label: '😠 Unhappy', value: unhappy, color1: '#f87171', color2: '#ef4444', baseColor: '#dc2626' }
     ];
-
+    
     bars.forEach((bar, idx) => {
-      const barHeight = (bar.value / maxVal) * maxBarHeight;
-      const x = startX + idx * barWidth;
+      const barHeight = maxVal === 0 ? 0 : (bar.value / maxVal) * maxBarHeight;
+      const x = startX + idx * (barWidth + 20);
       const y = bottomY - barHeight;
-      ctx.fillStyle = bar.color;
-      ctx.fillRect(x, y, barWidth - 10, barHeight);
+      
+      // create gradient for bar
+      const gradient = ctx.createLinearGradient(x, y, x, bottomY);
+      gradient.addColorStop(0, bar.color1);
+      gradient.addColorStop(1, bar.color2);
+      
+      // rounded bar with shadow
+      drawRoundedRect(ctx, x, y, barWidth, barHeight, 12, gradient, true);
+      
+      // label under bar
       ctx.fillStyle = '#1e293b';
-      ctx.font = '12px system-ui';
+      ctx.font = '500 13px "Inter", system-ui';
       ctx.textAlign = 'center';
-      ctx.fillText(bar.label, x + (barWidth - 10)/2, bottomY + 18);
+      ctx.fillText(bar.label, x + barWidth/2, bottomY + 18);
+      
+      // value on top of bar
       ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 14px system-ui';
-      ctx.fillText(bar.value, x + (barWidth - 10)/2, y - 5);
+      ctx.font = 'bold 15px "Inter", system-ui';
+      ctx.shadowBlur = 0;
+      ctx.fillText(bar.value, x + barWidth/2, y - 6);
+      
+      // optional: small percentage (if total >0)
+      const total = happy+neutral+unhappy;
+      if (total > 0 && bar.value > 0) {
+        const percent = ((bar.value/total)*100).toFixed(1);
+        ctx.fillStyle = '#475569';
+        ctx.font = '10px "Inter", system-ui';
+        ctx.fillText(`${percent}%`, x + barWidth/2, y - 20);
+      }
     });
+    
+    // axis styling
     ctx.beginPath();
-    ctx.moveTo(40, bottomY);
-    ctx.lineTo(width-20, bottomY);
+    ctx.moveTo(48, bottomY);
+    ctx.lineTo(width - 20, bottomY);
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
+    
+    // add tiny icons or extra flair: subtle inner glow on bars (optional)
+    ctx.restore();
+    
+    // draw title inside canvas (optional)
+    ctx.font = 'italic 11px "Inter"';
+    ctx.fillStyle = '#6c757d';
+    ctx.textAlign = 'right';
+    ctx.fillText('↑ happier ↑', width - 40, 30);
   }
 
   async function refreshDashboard() {
@@ -410,7 +507,8 @@
       document.getElementById('neutralPercent').innerHTML = `${neutralPercent}%`;
       document.getElementById('unhappyPercent').innerHTML = `${unhappyPercent}%`;
 
-      drawBarChart(happy, neutral, unhappy);
+      // draw enhanced chart
+      drawAttractiveBarChart(happy, neutral, unhappy);
 
       const sorted = [...allFeedbacks].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
       const recent20 = sorted.slice(0,20);
@@ -507,6 +605,22 @@
   document.getElementById('importFileInput').addEventListener('change', handleImportFile);
 
   refreshDashboard();
+
+  // handle window resize to redraw chart responsively
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(async () => {
+      const all = await getAllFeedback();
+      let happy = 0, neutral = 0, unhappy = 0;
+      all.forEach(f => {
+        if (f.mood === 'happy') happy++;
+        else if (f.mood === 'neutral') neutral++;
+        else if (f.mood === 'unhappy') unhappy++;
+      });
+      drawAttractiveBarChart(happy, neutral, unhappy);
+    }, 150);
+  });
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('https://bunny123-code.github.io/satisfaction-meter-mark2/sw.js').then(reg => {

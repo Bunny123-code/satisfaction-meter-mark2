@@ -102,6 +102,17 @@
       line-height: 1.3;
     }
 
+    .error-message {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-left: 4px solid #dc2626;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin: 1rem 0;
+      font-weight: 500;
+      text-align: center;
+    }
+
     .emoji-panel {
       display: flex;
       justify-content: space-between;
@@ -200,13 +211,18 @@
       box-shadow: 0 10px 20px -5px rgba(79,70,229,0.5);
       letter-spacing: 0.3px;
     }
-    button.submit:hover {
+    button.submit:hover:not(:disabled) {
       background: linear-gradient(100deg, #4338ca, #7c3aed);
       transform: translateY(-2px);
       box-shadow: 0 18px 28px -8px rgba(79,70,229,0.7);
     }
-    button.submit:active {
+    button.submit:active:not(:disabled) {
       transform: translateY(1px);
+    }
+    button.submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .message {
@@ -253,7 +269,11 @@
 </div>
 <div class="container">
   <h1>😊 Satisfaction Meter</h1>
-  <div class="store-name" id="storeNameDisplay">📍 Loading store...</div>
+  <div id="storeNameDisplay" class="store-name">📍 Loading store...</div>
+
+  <div id="storeError" style="display:none;" class="error-message">
+    ⚠️ Missing store name. Please use <code>?store=yourstorename</code> in the URL.
+  </div>
 
   <div class="emoji-panel">
     <button class="mood-btn happy" data-mood="happy">
@@ -282,56 +302,67 @@
 </div>
 
 <script>
-  // ---------- STORE NAME FROM URL (e.g., ?store=my_store) ----------
+  // ---------- STORE NAME FROM URL (required) ----------
   function getStoreNameFromURL() {
     const params = new URLSearchParams(window.location.search);
     let store = params.get('store');
-    if (store) {
-      // Convert underscores/spaces to readable format
+    if (store && store.trim() !== '') {
       store = store.replace(/_/g, ' ').replace(/%20/g, ' ');
-      // Capitalize each word
       store = store.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
       return store;
     }
     return null;
   }
 
-  const storeName = getStoreNameFromURL() || "My Store";
-  document.getElementById('storeNameDisplay').innerHTML = `🏪 ${storeName} · share your experience`;
-
-  // Update navigation links to preserve the store parameter
-  const currentStoreParam = window.location.search;
-  const navLinks = document.querySelectorAll('.nav-bar a');
-  navLinks.forEach(link => {
-    const href = link.getAttribute('href');
-    if (href && !href.startsWith('http')) {
-      const base = href.split('?')[0];
-      link.setAttribute('href', base + currentStoreParam);
-    }
-  });
-
-  // ---------- Feedback logic (unchanged) ----------
+  const storeName = getStoreNameFromURL();
+  const isValidStore = storeName !== null;
+  const storeNameDisplay = document.getElementById('storeNameDisplay');
+  const storeErrorDiv = document.getElementById('storeError');
+  const submitBtn = document.getElementById('submitBtn');
   const moodBtns = document.querySelectorAll('.mood-btn');
   const commentInput = document.getElementById('commentInput');
   const charCountSpan = document.getElementById('charCount');
-  const submitBtn = document.getElementById('submitBtn');
   const statusDiv = document.getElementById('statusMsg');
 
+  if (!isValidStore) {
+    storeNameDisplay.innerHTML = '❌ No store specified';
+    storeNameDisplay.style.borderLeftColor = '#dc2626';
+    storeErrorDiv.style.display = 'block';
+    submitBtn.disabled = true;
+    moodBtns.forEach(btn => btn.disabled = true);
+    commentInput.disabled = true;
+  } else {
+    storeNameDisplay.innerHTML = `🏪 ${storeName} · share your experience`;
+    // Update navigation links to preserve the store parameter
+    const currentStoreParam = window.location.search;
+    const navLinks = document.querySelectorAll('.nav-bar a');
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('http')) {
+        const base = href.split('?')[0];
+        link.setAttribute('href', base + currentStoreParam);
+      }
+    });
+  }
+
+  // ---------- Feedback logic (only if store is valid) ----------
   let selectedMood = null;
 
-  commentInput.addEventListener('input', () => {
-    charCountSpan.textContent = commentInput.value.length;
-  });
-  charCountSpan.textContent = '0';
-
-  moodBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const moodValue = btn.getAttribute('data-mood');
-      selectedMood = moodValue;
-      moodBtns.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+  if (isValidStore) {
+    commentInput.addEventListener('input', () => {
+      charCountSpan.textContent = commentInput.value.length;
     });
-  });
+    charCountSpan.textContent = '0';
+
+    moodBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const moodValue = btn.getAttribute('data-mood');
+        selectedMood = moodValue;
+        moodBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+  }
 
   const DB_NAME = 'SatisfactionMeterDB';
   const DB_VERSION = 1;
@@ -384,33 +415,36 @@
     }
   }
 
-  submitBtn.addEventListener('click', async () => {
-    if (!selectedMood) {
-      showMessage('❌ Please tap a mood (Happy, Neutral, Unhappy) before submitting.', true);
-      return;
-    }
-    const commentText = commentInput.value.trim();
-    if (commentText.length > 300) {
-      showMessage('⚠️ Comment exceeds 300 characters.', true);
-      return;
-    }
+  if (isValidStore) {
+    submitBtn.addEventListener('click', async () => {
+      if (!selectedMood) {
+        showMessage('❌ Please tap a mood (Happy, Neutral, Unhappy) before submitting.', true);
+        return;
+      }
+      const commentText = commentInput.value.trim();
+      if (commentText.length > 300) {
+        showMessage('⚠️ Comment exceeds 300 characters.', true);
+        return;
+      }
 
-    const feedback = {
-      id: generateId(),
-      mood: selectedMood,
-      comment: commentText,
-      timestamp: new Date().toISOString()
-    };
+      const feedback = {
+        id: generateId(),
+        mood: selectedMood,
+        comment: commentText,
+        timestamp: new Date().toISOString(),
+        store: storeName  // also store the store name with each entry
+      };
 
-    try {
-      await addFeedback(feedback);
-      showMessage('✅ Thank you for your feedback! 🙏');
-      resetFormUI();
-    } catch (err) {
-      console.error(err);
-      showMessage('⚠️ Failed to save. Please try again.', true);
-    }
-  });
+      try {
+        await addFeedback(feedback);
+        showMessage('✅ Thank you for your feedback! 🙏');
+        resetFormUI();
+      } catch (err) {
+        console.error(err);
+        showMessage('⚠️ Failed to save. Please try again.', true);
+      }
+    });
+  }
 
   // Service worker
   if ('serviceWorker' in navigator) {

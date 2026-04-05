@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#4f46e5">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <!-- Removed manifest link to avoid 404 errors (icons missing). Add back if you fix the icon paths in manifest.json -->
+  <link rel="manifest" href="./manifest.json">
   <title>Satisfaction Meter · Dashboard</title>
   <style>
     * {
@@ -250,8 +250,8 @@
 <body>
 <div class="dashboard-container">
   <div class="nav-bar">
-    <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/index.html">📝 Customer Form</a>
-    <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/dashboard.html" class="active">📊 Dashboard</a>
+    <a href="./index.html">📝 Customer Form</a>
+    <a href="./dashboard.html" class="active">📊 Dashboard</a>
   </div>
 
   <div class="stats-grid" id="statsGrid">
@@ -262,7 +262,7 @@
   </div>
 
   <div class="chart-card">
-    <h2>📈 Satisfaction Bar Chart — <span style="font-size:0.8rem;">beautiful & smooth</span></h2>
+    <h2>📈 Satisfaction Bar Chart — <span style="font-size:0.8rem;">smooth & interactive</span></h2>
     <canvas id="moodChart" width="700" height="320" style="width:100%; max-width:750px; height:auto;"></canvas>
   </div>
 
@@ -347,12 +347,15 @@
     });
   }
 
-  // ========== ATTRACTIVE BAR CHART WITH ROUNDED BARS & GRADIENTS ==========
+  // Enhanced ATTRACTIVE BAR CHART with smooth gradients, shadow, and animation
+  let currentHappy = 0, currentNeutral = 0, currentUnhappy = 0;
+  let animationFrame = null;
+
   function drawRoundedRect(ctx, x, y, width, height, radius, fillStyle, shadow = true) {
     ctx.save();
     if (shadow) {
-      ctx.shadowColor = 'rgba(0,0,0,0.2)';
-      ctx.shadowBlur = 6;
+      ctx.shadowColor = 'rgba(0,0,0,0.25)';
+      ctx.shadowBlur = 8;
       ctx.shadowOffsetX = 2;
       ctx.shadowOffsetY = 2;
     }
@@ -373,7 +376,7 @@
     ctx.restore();
   }
 
-  function drawAttractiveBarChart(happy, neutral, unhappy) {
+  function drawAttractiveBarChart(happy, neutral, unhappy, animate = true) {
     const canvas = document.getElementById('moodChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -382,6 +385,47 @@
     canvas.width = containerWidth;
     canvas.height = fixedHeight;
 
+    const width = canvas.width;
+    const height = canvas.height;
+    if (width === 0) return;
+
+    // Animate values if requested
+    if (animate && (currentHappy !== happy || currentNeutral !== neutral || currentUnhappy !== unhappy)) {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      const startHappy = currentHappy, startNeutral = currentNeutral, startUnhappy = currentUnhappy;
+      const diffHappy = happy - startHappy, diffNeutral = neutral - startNeutral, diffUnhappy = unhappy - startUnhappy;
+      const startTime = performance.now();
+      const duration = 600;
+      function step(now) {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+        const ease = 1 - Math.pow(1 - t, 3);
+        currentHappy = startHappy + diffHappy * ease;
+        currentNeutral = startNeutral + diffNeutral * ease;
+        currentUnhappy = startUnhappy + diffUnhappy * ease;
+        drawStaticChart(currentHappy, currentNeutral, currentUnhappy);
+        if (t < 1) animationFrame = requestAnimationFrame(step);
+        else {
+          currentHappy = happy;
+          currentNeutral = neutral;
+          currentUnhappy = unhappy;
+          drawStaticChart(currentHappy, currentNeutral, currentUnhappy);
+          animationFrame = null;
+        }
+      }
+      animationFrame = requestAnimationFrame(step);
+    } else {
+      currentHappy = happy;
+      currentNeutral = neutral;
+      currentUnhappy = unhappy;
+      drawStaticChart(currentHappy, currentNeutral, currentUnhappy);
+    }
+  }
+
+  function drawStaticChart(happy, neutral, unhappy) {
+    const canvas = document.getElementById('moodChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
     const width = canvas.width;
     const height = canvas.height;
     if (width === 0) return;
@@ -454,7 +498,7 @@
       ctx.fillStyle = '#0f172a';
       ctx.font = 'bold 15px "Inter", system-ui';
       ctx.shadowBlur = 0;
-      ctx.fillText(bar.value, x + barWidth/2, y - 6);
+      ctx.fillText(Math.round(bar.value), x + barWidth/2, y - 6);
       
       // optional: small percentage (if total >0)
       const total = happy+neutral+unhappy;
@@ -505,8 +549,8 @@
       document.getElementById('neutralPercent').innerHTML = `${neutralPercent}%`;
       document.getElementById('unhappyPercent').innerHTML = `${unhappyPercent}%`;
 
-      // draw enhanced chart
-      drawAttractiveBarChart(happy, neutral, unhappy);
+      // draw enhanced chart with animation
+      drawAttractiveBarChart(happy, neutral, unhappy, true);
 
       const sorted = [...allFeedbacks].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
       const recent20 = sorted.slice(0,20);
@@ -616,16 +660,15 @@
         else if (f.mood === 'neutral') neutral++;
         else if (f.mood === 'unhappy') unhappy++;
       });
-      drawAttractiveBarChart(happy, neutral, unhappy);
+      drawAttractiveBarChart(happy, neutral, unhappy, false);
     }, 150);
   });
 
-  // Register service worker only if it exists (to avoid errors if sw.js is missing/broken)
+  // Service worker registration - fixed scope
   if ('serviceWorker' in navigator) {
-    const swUrl = 'https://bunny123-code.github.io/satisfaction-meter-mark2/sw.js';
-    navigator.serviceWorker.register(swUrl, { scope: '/satisfaction-meter-mark2/' })
+    navigator.serviceWorker.register('./sw.js')
       .then(reg => console.log('Dashboard: SW registered', reg))
-      .catch(err => console.warn('SW registration skipped (expected if sw.js missing):', err));
+      .catch(err => console.warn('SW registration skipped:', err));
   }
 </script>
 </body>

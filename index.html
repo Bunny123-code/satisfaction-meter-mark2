@@ -42,7 +42,6 @@
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    /* modern navigation */
     .nav-bar {
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(16px);
@@ -70,7 +69,6 @@
       box-shadow: 0 4px 12px rgba(79,70,229,0.5);
     }
 
-    /* main card - premium feel */
     .container {
       max-width: 600px;
       width: 100%;
@@ -79,7 +77,6 @@
       box-shadow: 0 30px 50px -20px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.5);
       padding: 2rem 2rem 2.2rem;
       animation: floatIn 0.5s ease-out;
-      transition: transform 0.2s;
     }
 
     h1 {
@@ -105,7 +102,6 @@
       line-height: 1.3;
     }
 
-    /* mood panel - smaller emojis and text below */
     .emoji-panel {
       display: flex;
       justify-content: space-between;
@@ -156,7 +152,6 @@
       transform: scale(1.1);
     }
 
-    /* comment area */
     .comment-area {
       margin: 1.8rem 0;
     }
@@ -190,7 +185,6 @@
       margin-top: 0.3rem;
     }
 
-    /* submit button - glowing effect */
     button.submit {
       background: linear-gradient(100deg, #4f46e5, #8b5cf6);
       border: none;
@@ -215,7 +209,6 @@
       transform: translateY(1px);
     }
 
-    /* message styling */
     .message {
       margin-top: 1rem;
       text-align: center;
@@ -254,7 +247,7 @@
   </style>
 </head>
 <body>
-<div class="nav-bar">
+<div class="nav-bar" id="navBar">
   <a href="./index.html" class="active">📝 Customer Form</a>
   <a href="./dashboard.html">📊 Dashboard</a>
 </div>
@@ -289,12 +282,35 @@
 </div>
 
 <script>
-  // ======================== EDITABLE STORE NAME ========================
-  const STORE_NAME = "My Store";   // 👈 Change this text to your store name
-  // ====================================================================
+  // ---------- STORE NAME FROM URL (e.g., ?store=my_store) ----------
+  function getStoreNameFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    let store = params.get('store');
+    if (store) {
+      // Convert underscores/spaces to readable format
+      store = store.replace(/_/g, ' ').replace(/%20/g, ' ');
+      // Capitalize each word
+      store = store.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+      return store;
+    }
+    return null;
+  }
 
-  document.getElementById('storeNameDisplay').innerHTML = `🏪 ${STORE_NAME} · share your experience`;
+  const storeName = getStoreNameFromURL() || "My Store";
+  document.getElementById('storeNameDisplay').innerHTML = `🏪 ${storeName} · share your experience`;
 
+  // Update navigation links to preserve the store parameter
+  const currentStoreParam = window.location.search;
+  const navLinks = document.querySelectorAll('.nav-bar a');
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && !href.startsWith('http')) {
+      const base = href.split('?')[0];
+      link.setAttribute('href', base + currentStoreParam);
+    }
+  });
+
+  // ---------- Feedback logic (unchanged) ----------
   const moodBtns = document.querySelectorAll('.mood-btn');
   const commentInput = document.getElementById('commentInput');
   const charCountSpan = document.getElementById('charCount');
@@ -317,7 +333,6 @@
     });
   });
 
-  // IndexedDB
   const DB_NAME = 'SatisfactionMeterDB';
   const DB_VERSION = 1;
   const STORE_NAME_DB = 'feedback';
@@ -397,15 +412,11 @@
     }
   });
 
-  // Service worker registration - fixed scope to subdirectory
+  // Service worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => {
-        console.log('Service Worker registered with scope:', reg.scope);
-      })
-      .catch(err => {
-        console.log('Service Worker registration failed:', err);
-      });
+      .then(reg => console.log('SW registered', reg))
+      .catch(err => console.log('SW failed', err));
   }
 </script>
 </body>

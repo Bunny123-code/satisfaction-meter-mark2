@@ -6,8 +6,7 @@
   <meta name="theme-color" content="#4f46e5">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="https://bunny123-code.github.io/satisfaction-meter-mark2/icons/launchericon-192x192.png">
-  <link rel="manifest" href="https://bunny123-code.github.io/satisfaction-meter-mark2/manifest.json">
+  <link rel="manifest" href="./manifest.json">
   <title>Satisfaction Meter · Customer</title>
   <style>
     * {
@@ -106,18 +105,16 @@
       line-height: 1.3;
     }
 
-    /* mood panel - big playful buttons */
+    /* mood panel - smaller emojis and text below */
     .emoji-panel {
       display: flex;
       justify-content: space-between;
-      gap: 1.2rem;
+      gap: 1rem;
       margin-bottom: 2rem;
     }
     .mood-btn {
       background: #ffffff;
       border: none;
-      font-size: 2.2rem;
-      padding: 1rem 0;
       width: 100%;
       border-radius: 2rem;
       cursor: pointer;
@@ -126,6 +123,22 @@
       color: #1e293b;
       box-shadow: 0 8px 18px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
       border: 1px solid #eef2ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 0.5rem;
+      gap: 0.4rem;
+    }
+    .mood-emoji {
+      font-size: 1.8rem;
+      transition: transform 0.2s;
+    }
+    .mood-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: #334155;
     }
     .mood-btn:hover {
       transform: translateY(-6px) scale(1.02);
@@ -139,6 +152,9 @@
     .mood-btn.happy.selected { background: #dcfce7; border-color: #22c55e; box-shadow: 0 12px 20px -8px #22c55e60; }
     .mood-btn.neutral.selected { background: #fef9c3; border-color: #eab308; box-shadow: 0 12px 20px -8px #eab30860; }
     .mood-btn.unhappy.selected { background: #ffe4e2; border-color: #ef4444; box-shadow: 0 12px 20px -8px #ef444460; }
+    .mood-btn.selected .mood-emoji {
+      transform: scale(1.1);
+    }
 
     /* comment area */
     .comment-area {
@@ -230,24 +246,35 @@
     @media (max-width: 550px) {
       body { padding: 1rem; }
       .container { padding: 1.5rem; }
-      .mood-btn { font-size: 1.6rem; padding: 0.7rem 0; }
+      .mood-emoji { font-size: 1.4rem; }
+      .mood-label { font-size: 0.65rem; }
       h1 { font-size: 1.5rem; }
+      .emoji-panel { gap: 0.6rem; }
     }
   </style>
 </head>
 <body>
 <div class="nav-bar">
-  <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/index.html" class="active">📝 Customer Form</a>
-  <a href="https://bunny123-code.github.io/satisfaction-meter-mark2/dashboard.html">📊 Dashboard</a>
+  <a href="./index.html" class="active">📝 Customer Form</a>
+  <a href="./dashboard.html">📊 Dashboard</a>
 </div>
 <div class="container">
   <h1>😊 Satisfaction Meter</h1>
   <div class="store-name" id="storeNameDisplay">📍 Loading store...</div>
 
   <div class="emoji-panel">
-    <button class="mood-btn happy" data-mood="happy">😊 Happy</button>
-    <button class="mood-btn neutral" data-mood="neutral">😐 Neutral</button>
-    <button class="mood-btn unhappy" data-mood="unhappy">😠 Unhappy</button>
+    <button class="mood-btn happy" data-mood="happy">
+      <span class="mood-emoji">😊</span>
+      <span class="mood-label">Happy</span>
+    </button>
+    <button class="mood-btn neutral" data-mood="neutral">
+      <span class="mood-emoji">😐</span>
+      <span class="mood-label">Neutral</span>
+    </button>
+    <button class="mood-btn unhappy" data-mood="unhappy">
+      <span class="mood-emoji">😠</span>
+      <span class="mood-label">Unhappy</span>
+    </button>
   </div>
 
   <div class="comment-area">
@@ -370,10 +397,9 @@
     }
   });
 
-  // Register service worker with correct subdirectory scope
+  // Service worker registration - fixed scope to subdirectory
   if ('serviceWorker' in navigator) {
-    const swUrl = 'https://bunny123-code.github.io/satisfaction-meter-mark2/sw.js';
-    navigator.serviceWorker.register(swUrl, { scope: '/satisfaction-meter-mark2/' })
+    navigator.serviceWorker.register('./sw.js')
       .then(reg => {
         console.log('Service Worker registered with scope:', reg.scope);
       })
